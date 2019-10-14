@@ -1,5 +1,6 @@
 # Predetermined Python module, 'import' calls the module for use throughout the code.
 import random
+import string
 
 #==================================================================================================| READ FILE |=====================================#
 # Creating a function that reads the file.
@@ -24,18 +25,18 @@ def make_list_from_text(every_word):
 
 def new_game():
     starting_input = input(
-        "\n               ?¿? MYSTERY WORD ?¿? \n Guess a letter to complete the word, Press 'ENTER' to start! \n")
+        '\n' + "?¿? MYSTERY WORD ?¿?".center(50) + '\n' + "Guess a letter to complete the word, Press 'ENTER' to start!".center(50) + '\n')
     if starting_input == "":
         difficulty_level = input(
-            "SELECT DIFFICULTY: e = Easy, m = Medium, h = Hard").lower()
+            "SELECT DIFFICULTY: e = Easy, m = Medium, h = Hard".center(50) + '\n' + "> ").lower()
         if difficulty_level == "e":
-            print("EASY MODE")
+            print('\n' + "EASY DIFFICULTY ENABLED".center(50) + '\n')
         if difficulty_level == "m":
-            print("MEDIUM MODE")
+            print('\n' + "MODERATE DIFFICULTY ENABLED".center(50) + '\n')
         if difficulty_level == "h":
-            print("HARD MODE")
+            print('\n' + "HARD DIFFICULTY ENABLED".center(50) + '\n')
     else:
-        print("Need Valid Input")
+        print("Valid Input Required")
     return difficulty_level
 
 #==================================================================================================| GET RANDOM WORD/REPLACE LETTERS |===============#
@@ -44,9 +45,9 @@ def new_game():
 
 def get_word(list_of_words):
     random_word = random.choice(list_of_words).lower()
-    current_word = (("[ _ ] ") * len(random_word))
-    print("=== " + current_word + "===")
-    print(random_word + '\n')
+    current_word = (("[ _ ]") * len(random_word))
+    print(current_word.center(50, '-'))
+    print(random_word)
     return(random_word)
 
 #==================================================================================================| DIFFICULTY |====================================#
@@ -82,26 +83,34 @@ def display_letter(word, correct_guesses):
     display_word = " "
     for letter in word:
         if letter in correct_guesses:
-            display_word += letter + " "
+            display_word += " " + letter + " "
         else:
             display_word += "[ _ ]"
-    print(display_word)
+    print(display_word.center(50, '-'))
     return display_word
 
 #==================================================================================================| GUESS LETTER/CORRECT OR INCORRECT |=============#
 # Creating a function to allow the User to guess a letter and determine wether it is correct/incorrect.
 
 
-def correct_or_incorrect_guess(word, correct_guesses, incorrect_guesses, lives):
-    letter = input("Guess a Letter: ")
-    if letter in word:
+def correct_or_incorrect_guess(word, correct_guesses, incorrect_guesses):
+    letter = input("Guess a Letter: ".center(50))
+    if len(letter) >= 2:
+        print('\n' + "!! ONE LETTER ONLY !!".center(50) + '\n')
+    elif letter in incorrect_guesses:
+        print('\n' + "!! LETTER ALREADY GUESSED !!".center(50) + '\n')
+    elif letter in correct_guesses:
+        print('\n' + "!! LETTER ALREADY GUESSED !!".center(50) + '\n')
+    elif letter in " ":
+        print('\n' + "!! MUST BE A LETTER !!".center(50) + '\n')
+    elif letter in string.punctuation:
+        print('\n' + "!! MUST BE A LETTER !!".center(50) + '\n')
+    elif letter in word:
         correct_guesses.append(letter)
-        print('\n' + "Correct!")
+        print('\n' + "-Correct!-".center(50) + '\n')
     else:
         incorrect_guesses.append(letter)
-        lives -= 1
-        print('\n' + "Try Again!")
-        print(f" {lives} LIVES REMAINING")
+        print('\n' + "-Try Again!-".center(50) + '\n')
     display_letter(word, correct_guesses)
     return correct_guesses, incorrect_guesses
 
@@ -126,13 +135,13 @@ def during_game():
     incorrect_guesses = []
     difficulty = new_game()
     word = get_word(word_level(read_the_file('words.txt'), difficulty))
-    lives = 6
 
-    while currently_playing and len(incorrect_guesses) < 6:
-        correct_or_incorrect_guess(word, correct_guesses, incorrect_guesses, lives)
+    while currently_playing and len(incorrect_guesses) < 10:
+        correct_or_incorrect_guess(
+            word, correct_guesses, incorrect_guesses)
         if has_player_won(word, correct_guesses):
             currently_playing = False
-            print("YOU WIN!")
+            print(" YOU WIN! ".center(50, '#'))
     print("Game Over!")
 
 
